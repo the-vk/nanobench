@@ -1,8 +1,8 @@
 use std::{time::{Duration, Instant}, u128};
 
 pub struct B {
-    current_iterations: u32,
-    target_iterations: u32,
+    current_iterations: usize,
+    target_iterations: usize,
 
     suite_start_instant: Option<Instant>,
     suite_end_instant: Option<Instant>,
@@ -20,13 +20,13 @@ struct Measures {
 }
 
 impl B {
-    fn new(target_iterations: u32) -> B {
+    fn new(target_iterations: usize) -> B {
         B {
             current_iterations: 0,
             target_iterations,
             suite_start_instant: None,
             suite_end_instant: None,
-            iteration_instants: vec![]
+            iteration_instants: Vec::with_capacity(target_iterations)
         }
     }
 
