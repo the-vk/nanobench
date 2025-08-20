@@ -45,6 +45,10 @@ impl B {
         self.current_iterations <= self.target_iterations
     }
 
+    fn duration(&self) -> Option<Duration> {
+        self.suite_start_instant.zip(self.suite_end_instant).map(|(s, e)| e.duration_since(s))
+    }
+
     fn calc_measures(&self) -> Option<Measures> {
         if self.suite_start_instant.is_none() || self.suite_end_instant.is_none() || self.iteration_instants.is_empty() {
             return None;
@@ -92,15 +96,30 @@ impl B {
     }
 }
 
-pub fn suite<R, O>(name: &str, mut routine: R)
+pub fn suite<R, O>(name: &str, routine: R)
     where
-        R : FnMut(&mut B) -> O,
+        R : Fn(&mut B) -> O,
 {
     println!("bench {name}");
 
-    let mut b  = B::new(16);
+    let goal = Duration::from_secs(5);
 
-    routine(&mut b);
+
+    let mut n : usize = 1;
+    let mut b = B::new(n);
+    let mut duration = Some(Duration::ZERO);
+
+    while let Some(d) = duration {
+        if d > Duration::ZERO {
+            n = goal.div_duration_f64(d.div_f64(n as f64)).ceil() as usize;
+        }
+        if d >= goal {
+            break;
+        }
+        b = B::new(n);
+        routine(&mut b);
+        duration = b.duration();
+    }
 
     match b.calc_measures() {
         Some(m) => {
@@ -117,5 +136,4 @@ pub fn suite<R, O>(name: &str, mut routine: R)
         None => ()
     }
 }
-
 

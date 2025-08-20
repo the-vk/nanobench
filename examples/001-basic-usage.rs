@@ -2,7 +2,7 @@ use std::time::Duration;
 
 fn do_work() {
     // imitate heavy calculations
-    std::thread::sleep(Duration::from_secs(1));
+    std::thread::sleep(Duration::from_secs_f32(0.01));
 }
 
 fn main() {
