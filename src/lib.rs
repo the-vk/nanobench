@@ -17,6 +17,7 @@ struct Measures {
     std_dev: Duration,
     cleanup: Duration,
     total: Duration,
+    iterations: usize,
 }
 
 impl B {
@@ -40,8 +41,6 @@ impl B {
         }
 
         self.current_iterations += 1;
-
-        println!("iterations: {} out of {}", self.current_iterations, self.target_iterations);
         self.current_iterations <= self.target_iterations
     }
 
@@ -92,6 +91,7 @@ impl B {
             std_dev,
             cleanup,
             total: start_to_end,
+            iterations: n
         })
     }
 }
@@ -123,8 +123,9 @@ pub fn suite<R, O>(name: &str, routine: R)
 
     match b.calc_measures() {
         Some(m) => {
-            println!("Total: {:?}\nStartup: {:?}\nCleanup: {:?}\nMin: {:?}\nMax: {:?}\nMean: {:?}\nStdDev: {:?}",
+            println!("Total: {:?}\nIterations: {:?}\nStartup: {:?}\nCleanup: {:?}\nMin: {:?}\nMax: {:?}\nMean: {:?}\nStdDev: {:?}",
                 m.total,
+                m.iterations,
                 m.startup,
                 m.cleanup,
                 m.min,
