@@ -7,8 +7,16 @@ fn do_work() {
 
 fn main() {
     nbench::suite("abc", |b| {
+        // okay to do expensive data set up here
+        // start up time is measured separately from iterations
+
         while b.n() {
+            // calls to b.n() measure time between iterations
+            // b.n() returns true until nbench collects enough data for
+            // reliable measures
             do_work();
         }
+
+        // clean up time is measured too
     });
 }
